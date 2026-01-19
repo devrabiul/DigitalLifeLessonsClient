@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router";
+import { useAuth } from "../../hooks/useAuth";
+import { auth } from "../../firebase/config";
+import { signOut } from "firebase/auth";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   const navLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/lessons', label: 'Lessons' },
-    { path: '/dashboard', label: 'Dashboard' },
-    { path: '/login', label: 'Login' },
+    { path: "/", label: "Home" },
+    { path: "/lessons", label: "Lessons" },
+    { path: "/dashboard", label: "Dashboard" },
   ];
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
 
   const isActive = (path) => {
     if (path === '/') {
@@ -24,7 +31,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">LL</span>
             </div>
             <span className="text-xl font-bold text-gray-800 hidden sm:block">
@@ -46,9 +53,29 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            {user ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-lg font-medium transition-colors duration-200 text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                  isActive("/login")
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                }`}
+              >
+                Login
+              </Link>
+            )}
             <Link
               to="/register"
-              className="ml-2 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+              className="ml-2 px-6 py-2 bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
             >
               Get Started
             </Link>
@@ -83,10 +110,34 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            {user ? (
+              <button
+                type="button"
+                onClick={async () => {
+                  setIsMobileMenuOpen(false);
+                  await handleLogout();
+                }}
+                className="block w-full text-left px-4 py-3 rounded-lg font-medium transition-colors duration-200 text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block px-4 py-3 rounded-lg font-medium transition-colors duration-200 ${
+                  isActive("/login")
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                }`}
+              >
+                Login
+              </Link>
+            )}
             <Link
               to="/register"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block mt-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg text-center hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+              className="block mt-2 px-4 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg text-center hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
             >
               Get Started
             </Link>
