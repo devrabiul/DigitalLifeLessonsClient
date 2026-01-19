@@ -1,6 +1,5 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router";
-import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import PublicLessons from "./pages/PublicLessons";
 import LessonDetails from "./pages/LessonDetails";
@@ -9,6 +8,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
+import ToastProvider from "./components/UI/ToastProvider";
 
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
           </Routes>
         </Layout>
       </BrowserRouter>
-      <Toaster position="top-right" />
+      <ToastProvider />
     </>
   );
 }
