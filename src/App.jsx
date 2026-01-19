@@ -8,7 +8,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
-import ToastProvider from "./components/UI/ToastProvider";
+import ToastProvider from "./components/UI/ToastProvider.jsx";
 
 function App() {
   return (

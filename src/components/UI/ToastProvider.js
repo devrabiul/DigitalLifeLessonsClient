@@ -1,5 +1,1 @@
-import { Toaster } from "react-hot-toast";
-
-export default function ToastProvider() {
-  return <Toaster position="top-right" />;
-}
+export { default } from "./ToastProvider.jsx";
