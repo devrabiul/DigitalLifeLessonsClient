@@ -1,0 +1,37 @@
+.notfound-bg {
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    overflow: hidden;
+}
+
+.neon-text {
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glow 3s ease-in-out infinite;
+    text-shadow: 0 0 40px rgba(129, 140, 248, 0.4);
+}
+
+.neon-btn {
+    background: linear-gradient(90deg, #6366f1, #3b82f6);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+    transition: all 0.3s ease;
+}
+
+.neon-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.9);
+}
+
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+    }
+
+    50% {
+        text-shadow: 0 0 60px rgba(244, 114, 182, 0.6);
+    }
+
+    100% {
+        text-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+    }
+}
