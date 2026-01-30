@@ -1,57 +1,69 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { AuthContext } from '../../providers/AuthProvider';
+import { useParams, useNavigate, Link } from 'react-router';
 import api from '../../services/api';
 import { showSuccess, showError } from '../../utils/toast';
-import { useNavigate, Link } from 'react-router';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
-const AddLesson = () => {
-    const { user } = useContext(AuthContext); 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm({
-        defaultValues: {
-            privacy: 'public',
-            access_level: 'free',
-            category: 'Personal Growth',
-            emotional_tone: 'Motivational'
-        }
-    });
+const UpdateLesson = () => {
+    const { id } = useParams();
+    const { user } = useContext(AuthContext);
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+
+    const fetchLesson = useCallback(async () => {
+        try {
+            const response = await api.get(`/lessons/${id}`);
+            const lessonData = response.data;
+            
+            // Check if user owns this lesson
+            if (lessonData.author?.uid !== user?.uid && lessonData.authorId !== user?.uid) {
+                showError('You can only edit your own lessons');
+                navigate('/dashboard/my-lessons');
+                return;
+            }
+            
+            setLesson(lessonData);
+            reset({
+                title: lessonData.title || '',
+                description: lessonData.description || lessonData.content || lessonData.story || '',
+                category: lessonData.category || 'Personal Growth',
+                emotional_tone: lessonData.emotional_tone || lessonData.emotionalTone || 'Motivational',
+                privacy: lessonData.privacy || 'public',
+                access_level: lessonData.access_level || lessonData.accessLevel || 'free',
+                image_url: lessonData.image_url || lessonData.imageUrl || ''
+            });
+        } catch (error) {
+            console.error(error);
+            showError('Failed to load lesson');
+            navigate('/dashboard/my-lessons');
+        } finally {
+            setLoading(false);
+        }
+    }, [id, user, reset, navigate]);
+
+    useEffect(() => {
+        fetchLesson();
+    }, [fetchLesson]);
 
     const onSubmit = async (data) => {
         setSubmitting(true);
-        
-        // Prepare data
-        const lessonData = {
-            ...data,
-            author: {
-                name: user.displayName,
-                email: user.email,
-                photo: user.photoURL,
-                uid: user.uid
-            },
-            likes: [],
-            likesCount: 0,
-            favorites: [],
-            favoritesCount: 0,
-            reports: []
-        };
-
         try {
-            const response = await api.post('/lessons/create', lessonData);
-
-            if (response.data) {
-                showSuccess('Lesson published successfully!');
-                reset();
-                navigate('/dashboard/my-lessons');
-            }
+            await api.put(`/lessons/${id}`, data);
+            showSuccess('Lesson updated successfully!');
+            navigate('/dashboard/my-lessons');
         } catch (error) {
             console.error(error);
-            showError(error?.response?.data?.message || 'Failed to add lesson');
+            showError(error?.response?.data?.message || 'Failed to update lesson');
         } finally {
             setSubmitting(false);
         }
     };
+
+    if (loading) return <LoadingSpinner />;
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -66,8 +78,8 @@ const AddLesson = () => {
                     </svg>
                 </Link>
                 <div>
-                    <h2 className="text-3xl font-bold text-gray-800">Add New Lesson</h2>
-                    <p className="text-gray-500 mt-1">Share your wisdom with the world</p>
+                    <h2 className="text-3xl font-bold text-gray-800">Update Lesson</h2>
+                    <p className="text-gray-500 mt-1">Edit your lesson details</p>
                 </div>
             </div>
 
@@ -83,7 +95,7 @@ const AddLesson = () => {
                             {...register("title", { required: "Title is required" })} 
                             type="text" 
                             className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" 
-                            placeholder="Enter a compelling title for your lesson"
+                            placeholder="Enter a compelling title"
                         />
                         {errors.title && (
                             <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
@@ -96,18 +108,14 @@ const AddLesson = () => {
                             Description / Story <span className="text-red-500">*</span>
                         </label>
                         <textarea 
-                            {...register("description", { 
-                                required: "Description is required",
-                                minLength: { value: 50, message: "Description must be at least 50 characters" }
-                            })} 
+                            {...register("description", { required: "Description is required", minLength: { value: 50, message: "Description must be at least 50 characters" } })} 
                             rows="6"
                             className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
-                            placeholder="Share your story, experience, or the lesson you've learned. Be detailed and inspiring..."
+                            placeholder="Share your story, experience, or the lesson you've learned..."
                         ></textarea>
                         {errors.description && (
                             <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
                         )}
-                        <p className="mt-1 text-xs text-gray-500">Minimum 50 characters</p>
                     </div>
 
                     {/* Category & Tone */}
@@ -233,15 +241,20 @@ const AddLesson = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <p className="mt-1 text-xs text-gray-500">Add a cover image to make your lesson more engaging</p>
                     </div>
 
-                    {/* Submit */}
-                    <div className="pt-6 border-t border-gray-100">
+                    {/* Actions */}
+                    <div className="flex items-center gap-4 pt-6 border-t border-gray-100">
+                        <Link
+                            to="/dashboard/my-lessons"
+                            className="flex-1 px-6 py-3 border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors text-center"
+                        >
+                            Cancel
+                        </Link>
                         <button 
                             type="submit" 
                             disabled={submitting}
-                            className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {submitting ? (
                                 <>
@@ -249,58 +262,22 @@ const AddLesson = () => {
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                     </svg>
-                                    Publishing...
+                                    Updating...
                                 </>
                             ) : (
                                 <>
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
-                                    Publish Lesson
+                                    Update Lesson
                                 </>
                             )}
                         </button>
                     </div>
                 </form>
             </div>
-
-            {/* Tips Card */}
-            <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-6 border border-purple-100">
-                <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                    Tips for a great lesson
-                </h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-start gap-2">
-                        <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        Be specific and share real experiences
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        Include what you learned and how it changed you
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        Add a cover image to increase engagement
-                    </li>
-                    <li className="flex items-start gap-2">
-                        <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        Choose the right category and tone for better discoverability
-                    </li>
-                </ul>
-            </div>
         </div>
     );
 };
 
-export default AddLesson;
+export default UpdateLesson;
