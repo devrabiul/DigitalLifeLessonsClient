@@ -4,9 +4,13 @@ import { AuthContext } from '../../providers/AuthProvider';
 import api from '../../services/api';
 import { showSuccess, showError } from '../../utils/toast';
 import { useNavigate, Link } from 'react-router';
+import { useAuth } from '../../hooks/useAuth';
 
 const AddLesson = () => {
     const { user } = useContext(AuthContext); 
+    const { dbUser } = useAuth();
+    const isPremiumUser = dbUser?.isPremium || dbUser?.role === 'admin';
+    
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
         defaultValues: {
             privacy: 'public',
@@ -198,12 +202,17 @@ const AddLesson = () => {
                                         <p className="text-xs text-gray-500">Available to all users</p>
                                     </div>
                                 </label>
-                                <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                                <label className={`flex items-center gap-3 p-3 border rounded-xl transition-colors ${
+                                    isPremiumUser 
+                                        ? 'border-gray-200 cursor-pointer hover:bg-gray-50' 
+                                        : 'border-gray-100 cursor-not-allowed bg-gray-50 opacity-60'
+                                }`}>
                                     <input
                                         type="radio"
                                         {...register("access_level")}
                                         value="premium"
-                                        className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                                        disabled={!isPremiumUser}
+                                        className="w-4 h-4 text-purple-600 focus:ring-purple-500 disabled:opacity-50"
                                     />
                                     <div className="flex items-center gap-2">
                                         <span className="font-medium text-gray-800">Premium</span>
@@ -211,8 +220,24 @@ const AddLesson = () => {
                                             PRO
                                         </span>
                                     </div>
-                                    <p className="text-xs text-gray-500 ml-auto">Premium members only</p>
+                                    <div className="ml-auto text-right">
+                                        {isPremiumUser ? (
+                                            <p className="text-xs text-gray-500">Premium members only</p>
+                                        ) : (
+                                            <Link to="/pricing" className="text-xs text-violet-600 font-medium hover:underline">
+                                                Upgrade to unlock
+                                            </Link>
+                                        )}
+                                    </div>
                                 </label>
+                                {!isPremiumUser && (
+                                    <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                                        <svg className="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Premium access level requires a premium subscription
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

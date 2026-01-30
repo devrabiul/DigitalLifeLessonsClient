@@ -3,6 +3,21 @@ import { Link, useNavigate, useLocation } from "react-router";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/config";
 import { showError, showSuccess } from "../utils/toast";
+import api from "../services/api";
+
+// Sync user to MongoDB
+const syncUserToDb = async (user) => {
+    try {
+        await api.post('/users', {
+            name: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            uid: user.uid
+        });
+    } catch (error) {
+        console.error('Failed to sync user:', error);
+    }
+};
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -19,7 +34,8 @@ export default function Login() {
         setLoading(true);
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const result = await signInWithEmailAndPassword(auth, email, password);
+            await syncUserToDb(result.user);
             showSuccess("Logged in successfully!");
             navigate(from, { replace: true });
         } catch (error) {
@@ -31,7 +47,8 @@ export default function Login() {
 
     const handleGoogleLogin = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
+            const result = await signInWithPopup(auth, googleProvider);
+            await syncUserToDb(result.user);
             showSuccess("Logged in with Google!");
             navigate(from, { replace: true });
         } catch (error) {

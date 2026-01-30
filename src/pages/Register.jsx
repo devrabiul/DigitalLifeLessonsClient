@@ -8,6 +8,21 @@ import {
 import { auth, googleProvider } from "../firebase/config";
 import { showError, showSuccess } from "../utils/toast";
 import { validatePassword } from "../utils/validators";
+import api from "../services/api";
+
+// Sync user to MongoDB
+const syncUserToDb = async (user) => {
+    try {
+        await api.post('/users', {
+            name: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            uid: user.uid
+        });
+    } catch (error) {
+        console.error('Failed to sync user:', error);
+    }
+};
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -57,6 +72,13 @@ export default function Register() {
                 photoURL: formData.photoURL || "",
             });
 
+            // Sync user to MongoDB
+            await syncUserToDb({
+                ...userCredential.user,
+                displayName: formData.name,
+                photoURL: formData.photoURL || ""
+            });
+
             showSuccess("Account created successfully!");
             navigate("/dashboard");
         } catch (error) {
@@ -68,7 +90,8 @@ export default function Register() {
 
     const handleGoogleRegister = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
+            const result = await signInWithPopup(auth, googleProvider);
+            await syncUserToDb(result.user);
             showSuccess("Logged in with Google!");
             navigate("/dashboard");
         } catch (error) {

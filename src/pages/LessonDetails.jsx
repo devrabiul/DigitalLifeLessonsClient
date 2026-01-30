@@ -294,32 +294,45 @@ export default function LessonDetails() {
                         <p className="text-gray-600 text-sm mb-4">
                             Help us understand what's wrong with this lesson. Our team will review your report.
                         </p>
-                        <div className="space-y-3 mb-4">
-                            {['Inappropriate content', 'Spam or misleading', 'Hate speech', 'Copyright violation', 'Other'].map((reason) => (
-                                <label key={reason} className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                                    <input
-                                        type="radio"
-                                        name="reportReason"
-                                        value={reason}
-                                        checked={reportReason === reason}
-                                        onChange={(e) => setReportReason(e.target.value)}
-                                        className="w-4 h-4 text-red-600 focus:ring-red-500"
-                                    />
-                                    <span className="text-gray-700">{reason}</span>
-                                </label>
-                            ))}
-                        </div>
-                        {reportReason === 'Other' && (
-                            <textarea
-                                placeholder="Please describe the issue..."
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 mb-4 resize-none"
-                                rows="3"
+                        
+                        {/* Report Reason Dropdown */}
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Select a reason <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                value={reportReason}
                                 onChange={(e) => setReportReason(e.target.value)}
-                            />
+                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 bg-white text-gray-700"
+                            >
+                                <option value="">Choose a reason...</option>
+                                <option value="Inappropriate Content">Inappropriate Content</option>
+                                <option value="Hate Speech or Harassment">Hate Speech or Harassment</option>
+                                <option value="Misleading or False Information">Misleading or False Information</option>
+                                <option value="Spam or Promotional Content">Spam or Promotional Content</option>
+                                <option value="Sensitive or Disturbing Content">Sensitive or Disturbing Content</option>
+                                <option value="Copyright Violation">Copyright Violation</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        {reportReason === 'Other' && (
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Please describe the issue
+                                </label>
+                                <textarea
+                                    placeholder="Provide details about the issue..."
+                                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                                    rows="3"
+                                    onChange={(e) => setReportReason(`Other: ${e.target.value}`)}
+                                />
+                            </div>
                         )}
+
                         <div className="flex gap-3">
                             <button
-                                onClick={() => setShowReportModal(false)}
+                                onClick={() => { setShowReportModal(false); setReportReason(''); }}
                                 className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
                             >
                                 Cancel
@@ -338,8 +351,6 @@ export default function LessonDetails() {
 
             {/* Comments - only show for accessible content */}
             {canAccessContent && <Comments lessonId={id} />}
-
-            <Comments lessonId={id} />
 
             <SimilarLessons
                 currentLessonId={id}

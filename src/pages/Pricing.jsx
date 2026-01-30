@@ -5,12 +5,12 @@ import { showError } from "../utils/toast";
 import api from "../services/api";
 
 const Pricing = () => {
-  const { user } = useAuth();
+  const { user, dbUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // Check if user is premium (this should come from your backend/context)
-  const isPremium = user?.isPremium || false;
+  // Check if user is premium from MongoDB user data
+  const isPremium = dbUser?.isPremium || false;
 
   const features = [
     {

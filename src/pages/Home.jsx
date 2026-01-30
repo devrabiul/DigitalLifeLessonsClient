@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
+import api from "../services/api";
 import "./css/Home.css";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [featuredLessons, setFeaturedLessons] = useState([]);
+  const [topContributors, setTopContributors] = useState([]);
+  const [mostSavedLessons, setMostSavedLessons] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Hero Slider Data
   const heroSlides = [
@@ -42,6 +47,29 @@ const Home = () => {
     },
   ];
 
+  // Fetch dynamic data
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const [featuredRes, contributorsRes, mostSavedRes] = await Promise.all([
+          api.get('/lessons/featured'),
+          api.get('/lessons/top-contributors'),
+          api.get('/lessons/most-saved')
+        ]);
+        
+        setFeaturedLessons(featuredRes.data.lessons || []);
+        setTopContributors(contributorsRes.data.contributors || []);
+        setMostSavedLessons(mostSavedRes.data.lessons || []);
+      } catch (error) {
+        console.error('Failed to fetch home data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
+
   // Auto-slide effect
   useEffect(() => {
     const timer = setInterval(() => {
@@ -49,58 +77,6 @@ const Home = () => {
     }, 5000);
     return () => clearInterval(timer);
   }, [heroSlides.length]);
-
-  // Featured Lessons (Dynamic - Replace with API data)
-  const featuredLessons = [
-    {
-      id: 1,
-      title: "The Power of Starting Small",
-      excerpt:
-        "How tiny habits lead to massive transformations over time. Learn the science behind incremental progress...",
-      author: "Jane Smith",
-      authorAvatar: "JS",
-      likes: 124,
-      saves: 45,
-      category: "Personal Growth",
-      readTime: "5 min",
-    },
-    {
-      id: 2,
-      title: "Career Pivot at 35",
-      excerpt:
-        "From corporate burnout to entrepreneurial freedom. A journey of self-discovery and courage...",
-      author: "John Doe",
-      authorAvatar: "JD",
-      likes: 89,
-      saves: 32,
-      category: "Career",
-      readTime: "8 min",
-    },
-    {
-      id: 3,
-      title: "Lessons from Failure",
-      excerpt:
-        "What my biggest failure taught me about resilience and the importance of perspective...",
-      author: "Alex Johnson",
-      authorAvatar: "AJ",
-      likes: 203,
-      saves: 78,
-      category: "Mindset",
-      readTime: "6 min",
-    },
-    {
-      id: 4,
-      title: "Building Meaningful Relationships",
-      excerpt:
-        "The art of deep connections in a digital age. Quality over quantity in friendships...",
-      author: "Sarah Wilson",
-      authorAvatar: "SW",
-      likes: 156,
-      saves: 62,
-      category: "Relationships",
-      readTime: "7 min",
-    },
-  ];
 
   // Why Learning From Life Matters - 4 Benefit Cards (Static)
   const benefits = [
@@ -134,93 +110,19 @@ const Home = () => {
     },
   ];
 
-  // Top Contributors of the Week (Dynamic - Replace with API data)
-  const topContributors = [
-    {
-      id: 1,
-      name: "Emily Chen",
-      avatar: "EC",
-      lessonsCount: 12,
-      totalLikes: 1240,
-      badge: "🏆",
-      rank: 1,
-    },
-    {
-      id: 2,
-      name: "Michael Brown",
-      avatar: "MB",
-      lessonsCount: 9,
-      totalLikes: 890,
-      badge: "🥈",
-      rank: 2,
-    },
-    {
-      id: 3,
-      name: "Priya Sharma",
-      avatar: "PS",
-      lessonsCount: 8,
-      totalLikes: 756,
-      badge: "🥉",
-      rank: 3,
-    },
-    {
-      id: 4,
-      name: "David Kim",
-      avatar: "DK",
-      lessonsCount: 7,
-      totalLikes: 623,
-      badge: "",
-      rank: 4,
-    },
-    {
-      id: 5,
-      name: "Lisa Anderson",
-      avatar: "LA",
-      lessonsCount: 6,
-      totalLikes: 589,
-      badge: "",
-      rank: 5,
-    },
-  ];
+  // Helper function to get initials from name
+  const getInitials = (name) => {
+    if (!name) return '??';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
 
-  // Most Saved Lessons (Dynamic - Replace with API data)
-  const mostSavedLessons = [
-    {
-      id: 1,
-      title: "How I Overcame Imposter Syndrome",
-      author: "Rachel Green",
-      saves: 342,
-      category: "Mindset",
-    },
-    {
-      id: 2,
-      title: "Financial Freedom at 30: My Journey",
-      author: "Mark Thompson",
-      saves: 289,
-      category: "Finance",
-    },
-    {
-      id: 3,
-      title: "The Morning Routine That Changed Everything",
-      author: "Anna White",
-      saves: 267,
-      category: "Productivity",
-    },
-    {
-      id: 4,
-      title: "From Shy to Confident: A 2-Year Transformation",
-      author: "Chris Lee",
-      saves: 234,
-      category: "Personal Growth",
-    },
-    {
-      id: 5,
-      title: "Learning to Say No Without Guilt",
-      author: "Maya Patel",
-      saves: 212,
-      category: "Self-Care",
-    },
-  ];
+  // Helper to get badge for rank
+  const getRankBadge = (rank) => {
+    if (rank === 1) return '🏆';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    return `#${rank}`;
+  };
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
@@ -431,68 +333,77 @@ const Home = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredLessons.map((lesson) => (
-              <Link
-                key={lesson.id}
-                to={`/lessons/${lesson.id}`}
-                className="group bg-white border border-gray-200 rounded-2xl p-6 hover:border-blue-300 hover:shadow-xl transition-all duration-300"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">
-                    {lesson.category}
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    {lesson.readTime}
-                  </span>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white border border-gray-200 rounded-2xl p-6 animate-pulse">
+                  <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
+                  <div className="h-10 bg-gray-200 rounded w-full mt-4"></div>
                 </div>
+              ))}
+            </div>
+          ) : featuredLessons.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredLessons.map((lesson) => (
+                <Link
+                  key={lesson._id}
+                  to={`/lessons/${lesson._id}`}
+                  className="group bg-white border border-gray-200 rounded-2xl p-6 hover:border-blue-300 hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">
+                      {lesson.category}
+                    </span>
+                    {lesson.access_level === 'premium' && (
+                      <span className="px-2 py-0.5 bg-violet-100 text-violet-600 text-xs font-medium rounded-full">
+                        Premium
+                      </span>
+                    )}
+                  </div>
 
-                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                  {lesson.title}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {lesson.excerpt}
-                </p>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                    {lesson.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {lesson.shortDescription || lesson.story?.slice(0, 100) + '...'}
+                  </p>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-medium">
-                      {lesson.authorAvatar}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                        {lesson.author?.photoURL ? (
+                          <img src={lesson.author.photoURL} alt="" className="w-full h-full rounded-full object-cover" />
+                        ) : (
+                          getInitials(lesson.author?.name || lesson.authorName)
+                        )}
+                      </div>
+                      <span className="text-sm text-gray-700">{lesson.author?.name || lesson.authorName}</span>
                     </div>
-                    <span className="text-sm text-gray-700">{lesson.author}</span>
+                    <div className="flex items-center gap-3 text-gray-400 text-sm">
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                        </svg>
+                        {lesson.likesCount || 0}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                        </svg>
+                        {lesson.favoritesCount || 0}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-400 text-sm">
-                    <span className="flex items-center gap-1">
-                      <svg
-                        className="w-4 h-4"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
-                      </svg>
-                      {lesson.likes}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                        />
-                      </svg>
-                      {lesson.saves}
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-gray-50 rounded-2xl">
+              <p className="text-gray-500">No featured lessons yet. Check back soon!</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -561,31 +472,54 @@ const Home = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                {topContributors.map((contributor) => (
-                  <div
-                    key={contributor.id}
-                    className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 hover:bg-white/20 transition-colors"
-                  >
-                    <div className="flex items-center justify-center w-8 text-lg font-bold">
-                      {contributor.badge || `#${contributor.rank}`}
+              {loading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="flex items-center gap-4 bg-white/10 rounded-xl p-4 animate-pulse">
+                      <div className="w-8 h-8 bg-white/20 rounded"></div>
+                      <div className="w-12 h-12 bg-white/20 rounded-full"></div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-white/20 rounded w-24 mb-2"></div>
+                        <div className="h-3 bg-white/20 rounded w-32"></div>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-gradient-to-br from-white/30 to-white/10 rounded-full flex items-center justify-center font-semibold">
-                      {contributor.avatar}
+                  ))}
+                </div>
+              ) : topContributors.length > 0 ? (
+                <div className="space-y-4">
+                  {topContributors.map((contributor, index) => (
+                    <div
+                      key={contributor._id || index}
+                      className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 hover:bg-white/20 transition-colors"
+                    >
+                      <div className="flex items-center justify-center w-8 text-lg font-bold">
+                        {getRankBadge(index + 1)}
+                      </div>
+                      <div className="w-12 h-12 bg-gradient-to-br from-white/30 to-white/10 rounded-full flex items-center justify-center font-semibold overflow-hidden">
+                        {contributor.photoURL ? (
+                          <img src={contributor.photoURL} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          getInitials(contributor.name)
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{contributor.name}</h4>
+                        <p className="text-white/70 text-sm">
+                          {contributor.lessonsCount} lessons •{" "}
+                          {contributor.totalLikes} likes
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{contributor.name}</h4>
-                      <p className="text-white/70 text-sm">
-                        {contributor.lessonsCount} lessons •{" "}
-                        {contributor.totalLikes} likes
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-white/70">
+                  <p>No contributors data yet.</p>
+                </div>
+              )}
 
               <Link
-                to="/contributors"
+                to="/lessons"
                 className="mt-6 inline-flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium"
               >
                 View all contributors
@@ -621,37 +555,56 @@ const Home = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                {mostSavedLessons.map((lesson, index) => (
-                  <Link
-                    key={lesson.id}
-                    to={`/lessons/${lesson.id}`}
-                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors group"
-                  >
-                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 font-semibold text-sm group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
-                      {index + 1}
+              {loading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="flex items-center gap-4 p-4 animate-pulse">
+                      <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-gray-200 rounded w-48 mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-32"></div>
+                      </div>
+                      <div className="w-12 h-6 bg-gray-200 rounded"></div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
-                        {lesson.title}
-                      </h4>
-                      <p className="text-gray-500 text-sm">
-                        by {lesson.author} • {lesson.category}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1 text-rose-500 font-medium">
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
-                      </svg>
-                      {lesson.saves}
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : mostSavedLessons.length > 0 ? (
+                <div className="space-y-4">
+                  {mostSavedLessons.map((lesson, index) => (
+                    <Link
+                      key={lesson._id}
+                      to={`/lessons/${lesson._id}`}
+                      className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors group"
+                    >
+                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 font-semibold text-sm group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                          {lesson.title}
+                        </h4>
+                        <p className="text-gray-500 text-sm">
+                          by {lesson.author?.name || lesson.authorName} • {lesson.category}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1 text-rose-500 font-medium">
+                        <svg
+                          className="w-5 h-5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                        </svg>
+                        {lesson.favoritesCount || 0}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No saved lessons data yet.</p>
+                </div>
+              )}
 
               <Link
                 to="/lessons?sort=saves"

@@ -19,6 +19,11 @@ import Layout from "./components/Layout/Layout";
 import ToastProvider from "./components/UI/ToastProvider.jsx";
 import ProtectedRoute from "./components/Auth/ProtectedRoute.jsx";
 import DashboardLayout from "./components/Layout/DashboardLayout.jsx";
+// Admin Pages
+import AdminDashboard from "./pages/Dashboard/Admin/AdminDashboard";
+import ManageUsers from "./pages/Dashboard/Admin/ManageUsers";
+import ManageLessons from "./pages/Dashboard/Admin/ManageLessons";
+import ReportedLessons from "./pages/Dashboard/Admin/ReportedLessons";
 
 function App() {
   return (
@@ -65,6 +70,11 @@ function App() {
               <Route path="my-lessons" element={<MyLessons />} />
               <Route path="my-favorites" element={<MyFavorites />} />
               <Route path="profile" element={<Profile />} />
+              {/* Admin Routes */}
+              <Route path="admin" element={<AdminDashboard />} />
+              <Route path="admin/manage-users" element={<ManageUsers />} />
+              <Route path="admin/manage-lessons" element={<ManageLessons />} />
+              <Route path="admin/reports" element={<ReportedLessons />} />
             </Route>
           </Route>
           

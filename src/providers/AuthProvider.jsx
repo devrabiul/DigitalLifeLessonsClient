@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useCallback } from "react";
 import { 
     createUserWithEmailAndPassword, 
     onAuthStateChanged, 
@@ -8,12 +8,36 @@ import {
     updateProfile 
 } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/config";
+import api from "../services/api";
 
 export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    // Fetch user data from MongoDB
+    const fetchDbUser = useCallback(async (uid) => {
+        if (!uid) {
+            setDbUser(null);
+            return;
+        }
+        try {
+            const response = await api.get(`/users/${uid}`);
+            setDbUser(response.data);
+        } catch (error) {
+            console.error('Failed to fetch user data:', error);
+            setDbUser(null);
+        }
+    }, []);
+
+    // Refresh user data (call this after payment success)
+    const refreshUser = useCallback(async () => {
+        if (user?.uid) {
+            await fetchDbUser(user.uid);
+        }
+    }, [user, fetchDbUser]);
 
     const createUser = (email, password) => {
         setLoading(true);
@@ -32,6 +56,7 @@ const AuthProvider = ({ children }) => {
 
     const logOut = () => {
         setLoading(true);
+        setDbUser(null);
         return signOut(auth);
     };
 
@@ -47,24 +72,29 @@ const AuthProvider = ({ children }) => {
             if (currentUser) {
                 const token = await currentUser.getIdToken();
                 localStorage.setItem('access-token', token);
+                // Fetch user data from MongoDB
+                await fetchDbUser(currentUser.uid);
             } else {
                 localStorage.removeItem('access-token');
+                setDbUser(null);
             }
             setLoading(false);
         });
         return () => {
             return unsubscribe();
         }
-    }, []);
+    }, [fetchDbUser]);
 
     const authInfo = {
         user,
+        dbUser,
         loading,
         createUser,
         signIn,
         googleSignIn,
         logOut,
-        updateUserProfile
+        updateUserProfile,
+        refreshUser
     };
 
     return (

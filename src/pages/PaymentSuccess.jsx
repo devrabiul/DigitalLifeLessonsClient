@@ -1,5 +1,7 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
+import { useAuth } from "../hooks/useAuth";
+import api from "../services/api";
 
 // Pre-generate confetti positions to avoid Math.random during render
 const generateConfetti = () => {
@@ -17,13 +19,35 @@ const CONFETTI_ITEMS = generateConfetti();
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const { user, refreshUser } = useAuth();
+  const [verifying, setVerifying] = useState(true);
+  const [verified, setVerified] = useState(false);
 
   useEffect(() => {
-    // You can verify the session with your backend here if needed
-    if (sessionId) {
-      console.log("Payment session:", sessionId);
-    }
-  }, [sessionId]);
+    const verifyAndUpdatePayment = async () => {
+      if (!sessionId || !user) {
+        setVerifying(false);
+        return;
+      }
+
+      try {
+        // Verify payment with backend and update user premium status
+        const response = await api.get(`/payments/verify/${sessionId}`);
+        
+        if (response.data?.success) {
+          setVerified(true);
+          // Refresh user data to get updated premium status
+          await refreshUser();
+        }
+      } catch (error) {
+        console.error("Payment verification error:", error);
+      } finally {
+        setVerifying(false);
+      }
+    };
+
+    verifyAndUpdatePayment();
+  }, [sessionId, user, refreshUser]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center px-4">
