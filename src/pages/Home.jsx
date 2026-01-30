@@ -1,266 +1,707 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import "./css/Home.css";
 
 const Home = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Hero Slider Data
+  const heroSlides = [
+    {
+      id: 1,
+      title: "Learn from Real Life Experiences",
+      subtitle: "Discover wisdom from people who've walked the path before you",
+      description:
+        "Join thousands of learners gaining insights from authentic life stories and experiences shared by our community.",
+      cta: "Start Learning",
+      ctaLink: "/lessons",
+      bgGradient: "from-blue-600 via-blue-700 to-purple-700",
+      image: "💡",
+    },
+    {
+      id: 2,
+      title: "Share Your Journey",
+      subtitle: "Your story could change someone's life",
+      description:
+        "Every experience matters. Share your lessons learned and inspire others to overcome challenges and achieve their goals.",
+      cta: "Share Your Story",
+      ctaLink: "/register",
+      bgGradient: "from-purple-600 via-pink-600 to-rose-600",
+      image: "✨",
+    },
+    {
+      id: 3,
+      title: "Grow Together as a Community",
+      subtitle: "Connect with like-minded individuals",
+      description:
+        "Be part of a supportive community where wisdom is shared, questions are answered, and everyone grows together.",
+      cta: "Join Community",
+      ctaLink: "/register",
+      bgGradient: "from-emerald-600 via-teal-600 to-cyan-600",
+      image: "🌱",
+    },
+  ];
+
+  // Auto-slide effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
+
+  // Featured Lessons (Dynamic - Replace with API data)
   const featuredLessons = [
     {
       id: 1,
       title: "The Power of Starting Small",
-      excerpt: "How tiny habits lead to massive transformations...",
+      excerpt:
+        "How tiny habits lead to massive transformations over time. Learn the science behind incremental progress...",
       author: "Jane Smith",
+      authorAvatar: "JS",
       likes: 124,
+      saves: 45,
       category: "Personal Growth",
+      readTime: "5 min",
     },
     {
       id: 2,
-      title: "Career Pivot: My Journey",
-      excerpt: "From corporate to entrepreneurship at 35...",
+      title: "Career Pivot at 35",
+      excerpt:
+        "From corporate burnout to entrepreneurial freedom. A journey of self-discovery and courage...",
       author: "John Doe",
+      authorAvatar: "JD",
       likes: 89,
+      saves: 32,
       category: "Career",
+      readTime: "8 min",
     },
     {
       id: 3,
       title: "Lessons from Failure",
-      excerpt: "What my biggest failure taught me about success...",
+      excerpt:
+        "What my biggest failure taught me about resilience and the importance of perspective...",
       author: "Alex Johnson",
+      authorAvatar: "AJ",
       likes: 203,
+      saves: 78,
       category: "Mindset",
+      readTime: "6 min",
+    },
+    {
+      id: 4,
+      title: "Building Meaningful Relationships",
+      excerpt:
+        "The art of deep connections in a digital age. Quality over quantity in friendships...",
+      author: "Sarah Wilson",
+      authorAvatar: "SW",
+      likes: 156,
+      saves: 62,
+      category: "Relationships",
+      readTime: "7 min",
     },
   ];
 
-  const categories = [
-    { name: "Personal Growth", icon: "🌱" },
-    { name: "Career", icon: "💼" },
-    { name: "Relationships", icon: "💝" },
-    { name: "Mindset", icon: "🧠" },
-    { name: "Mistakes Learned", icon: "📖" },
-    { name: "Health & Wellness", icon: "🏃‍♂️" },
+  // Why Learning From Life Matters - 4 Benefit Cards (Static)
+  const benefits = [
+    {
+      icon: "🎯",
+      title: "Real-World Wisdom",
+      description:
+        "Learn from authentic experiences, not just theory. Get practical insights that you can apply immediately in your life.",
+      color: "blue",
+    },
+    {
+      icon: "🤝",
+      title: "Community Support",
+      description:
+        "Connect with people who understand your journey. Share, discuss, and grow together with like-minded individuals.",
+      color: "purple",
+    },
+    {
+      icon: "💪",
+      title: "Personal Growth",
+      description:
+        "Accelerate your development by learning from others' successes and mistakes. Avoid common pitfalls on your path.",
+      color: "emerald",
+    },
+    {
+      icon: "🌟",
+      title: "Inspire Others",
+      description:
+        "Your experiences matter. By sharing your story, you could be the light that guides someone through their darkness.",
+      color: "rose",
+    },
   ];
 
+  // Top Contributors of the Week (Dynamic - Replace with API data)
+  const topContributors = [
+    {
+      id: 1,
+      name: "Emily Chen",
+      avatar: "EC",
+      lessonsCount: 12,
+      totalLikes: 1240,
+      badge: "🏆",
+      rank: 1,
+    },
+    {
+      id: 2,
+      name: "Michael Brown",
+      avatar: "MB",
+      lessonsCount: 9,
+      totalLikes: 890,
+      badge: "🥈",
+      rank: 2,
+    },
+    {
+      id: 3,
+      name: "Priya Sharma",
+      avatar: "PS",
+      lessonsCount: 8,
+      totalLikes: 756,
+      badge: "🥉",
+      rank: 3,
+    },
+    {
+      id: 4,
+      name: "David Kim",
+      avatar: "DK",
+      lessonsCount: 7,
+      totalLikes: 623,
+      badge: "",
+      rank: 4,
+    },
+    {
+      id: 5,
+      name: "Lisa Anderson",
+      avatar: "LA",
+      lessonsCount: 6,
+      totalLikes: 589,
+      badge: "",
+      rank: 5,
+    },
+  ];
+
+  // Most Saved Lessons (Dynamic - Replace with API data)
+  const mostSavedLessons = [
+    {
+      id: 1,
+      title: "How I Overcame Imposter Syndrome",
+      author: "Rachel Green",
+      saves: 342,
+      category: "Mindset",
+    },
+    {
+      id: 2,
+      title: "Financial Freedom at 30: My Journey",
+      author: "Mark Thompson",
+      saves: 289,
+      category: "Finance",
+    },
+    {
+      id: 3,
+      title: "The Morning Routine That Changed Everything",
+      author: "Anna White",
+      saves: 267,
+      category: "Productivity",
+    },
+    {
+      id: 4,
+      title: "From Shy to Confident: A 2-Year Transformation",
+      author: "Chris Lee",
+      saves: 234,
+      category: "Personal Growth",
+    },
+    {
+      id: 5,
+      title: "Learning to Say No Without Guilt",
+      author: "Maya Patel",
+      saves: 212,
+      category: "Self-Care",
+    },
+  ];
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide(
+      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length
+    );
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <section className="py-12 md:py-20 lg:py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div className="max-w-lg">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              Life Lessons That Transform
-            </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
-              Share, discover, and learn from real-life experiences. Wisdom from
-              people who've been there.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/lessons"
-                className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 text-center"
-              >
-                Explore Lessons
-              </Link>
-              <Link
-                to="/register"
-                className="px-8 py-3 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition duration-300 text-center"
-              >
-                Share Your Story
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-3xl overflow-hidden group hover:shadow-2xl transition-all duration-700">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 animate-gradient-xy"></div>
-
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.1)_0%,transparent_50%)]"></div>
-
-              <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-br from-cyan-400/40 to-blue-500/40 rounded-full blur-xl animate-pulse"></div>
-              <div
-                className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full blur-xl animate-pulse"
-                style={{ animationDelay: "1s" }}
-              ></div>
-
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative group/center">
-                  <div className="absolute inset-0 w-48 h-48 border-4 border-white/20 rounded-full animate-ping"></div>
-
-                  <div className="w-32 h-32 bg-gradient-to-br from-white/20 to-white/10 rounded-full backdrop-blur-lg border border-white/30 flex items-center justify-center shadow-2xl group-hover/center:scale-110 transition-all duration-500">
-                    <span className="text-5xl">✨</span>
+    <div className="min-h-screen bg-white">
+      {/* Hero Banner / Slider */}
+      <section className="relative h-[600px] overflow-hidden">
+        {heroSlides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+              index === currentSlide
+                ? "opacity-100 translate-x-0"
+                : index < currentSlide
+                ? "opacity-0 -translate-x-full"
+                : "opacity-0 translate-x-full"
+            }`}
+          >
+            <div
+              className={`h-full bg-gradient-to-r ${slide.bgGradient} flex items-center`}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div className="text-white">
+                    <span className="inline-block px-4 py-1 bg-white/20 rounded-full text-sm font-medium mb-4 backdrop-blur-sm">
+                      {slide.subtitle}
+                    </span>
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                      {slide.title}
+                    </h1>
+                    <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed max-w-xl">
+                      {slide.description}
+                    </p>
+                    <Link
+                      to={slide.ctaLink}
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    >
+                      {slide.cta}
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        />
+                      </svg>
+                    </Link>
                   </div>
-
-                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                    <div className="w-4 h-4 bg-white rounded-full animate-bounce"></div>
-                  </div>
-                  <div className="absolute -right-6 top-1/2 transform -translate-y-1/2">
-                    <div
-                      className="w-4 h-4 bg-white rounded-full animate-bounce"
-                      style={{ animationDelay: "0.5s" }}
-                    ></div>
-                  </div>
-                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
-                    <div
-                      className="w-4 h-4 bg-white rounded-full animate-bounce"
-                      style={{ animationDelay: "1s" }}
-                    ></div>
-                  </div>
-                  <div className="absolute -left-6 top-1/2 transform -translate-y-1/2">
-                    <div
-                      className="w-4 h-4 bg-white rounded-full animate-bounce"
-                      style={{ animationDelay: "1.5s" }}
-                    ></div>
+                  <div className="hidden lg:flex justify-center">
+                    <div className="text-[180px] animate-bounce-slow">
+                      {slide.image}
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <p className="text-white text-center font-semibold text-sm md:text-base">
-                    Discover Wisdom • Share Stories • Transform Lives
-                  </p>
-                </div>
-              </div>
-
-              <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-white/50 rounded-tl-xl"></div>
-              <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-white/50 rounded-tr-xl"></div>
-              <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-white/50 rounded-bl-xl"></div>
-              <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-white/50 rounded-br-xl"></div>
             </div>
           </div>
+        ))}
+
+        {/* Slider Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all z-10"
+          aria-label="Previous slide"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all z-10"
+          aria-label="Next slide"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+
+        {/* Slider Dots */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
+          {heroSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`transition-all duration-300 ${
+                index === currentSlide
+                  ? "w-10 h-3 bg-white rounded-full"
+                  : "w-3 h-3 bg-white/50 rounded-full hover:bg-white/70"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
       </section>
 
-      <section className="py-12">
-        <div className="bg-gray-50 rounded-2xl p-8 md:p-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-                1,234+
+      {/* Stats Section */}
+      <section className="py-12 bg-gray-50 border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="group">
+              <div className="text-4xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                10K+
               </div>
-              <div className="text-sm text-gray-500 uppercase tracking-wider">
+              <div className="text-sm text-gray-500 font-medium">
                 Life Lessons
               </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-                567+
+            <div className="group">
+              <div className="text-4xl font-bold text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">
+                50K+
               </div>
-              <div className="text-sm text-gray-500 uppercase tracking-wider">
-                Active Contributors
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-                89K+
-              </div>
-              <div className="text-sm text-gray-500 uppercase tracking-wider">
-                Lessons Learned
+              <div className="text-sm text-gray-500 font-medium">
+                Active Users
               </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-                4.8
+            <div className="group">
+              <div className="text-4xl font-bold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
+                5K+
               </div>
-              <div className="text-sm text-gray-500 uppercase tracking-wider">
-                Avg. Rating
+              <div className="text-sm text-gray-500 font-medium">
+                Contributors
+              </div>
+            </div>
+            <div className="group">
+              <div className="text-4xl font-bold text-gray-900 mb-1 group-hover:text-rose-600 transition-colors">
+                100K+
+              </div>
+              <div className="text-sm text-gray-500 font-medium">
+                Lives Impacted
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-12 md:py-20">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 md:mb-0">
-            Featured Lessons
-          </h2>
-          <Link
-            to="/lessons"
-            className="text-blue-600 font-semibold hover:text-blue-700 transition duration-300"
-          >
-            View All →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredLessons.map((lesson) => (
-            <div
-              key={lesson.id}
-              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100"
-            >
-              <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full mb-4">
-                {lesson.category}
+      {/* Featured Life Lessons (Dynamic) */}
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
+            <div>
+              <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
+                Discover Wisdom
               </span>
-
-              <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
-                {lesson.title}
-              </h3>
-
-              <p className="text-gray-600 mb-4 line-clamp-3">
-                {lesson.excerpt}
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">
+                Featured Life Lessons
+              </h2>
+              <p className="text-gray-600 mt-2 max-w-2xl">
+                Handpicked stories of growth, resilience, and transformation
+                from our community
               </p>
+            </div>
+            <Link
+              to="/lessons"
+              className="mt-4 md:mt-0 text-blue-600 font-medium inline-flex items-center gap-1 group hover:text-blue-700"
+            >
+              View all lessons
+              <svg
+                className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </Link>
+          </div>
 
-              <div className="flex justify-between items-center pt-4 border-t border-gray-100 mb-4">
-                <span className="font-semibold text-gray-700">
-                  {lesson.author}
-                </span>
-                <span className="text-red-500 font-semibold">
-                  ❤️ {lesson.likes}
-                </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredLessons.map((lesson) => (
+              <Link
+                key={lesson.id}
+                to={`/lessons/${lesson.id}`}
+                className="group bg-white border border-gray-200 rounded-2xl p-6 hover:border-blue-300 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">
+                    {lesson.category}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {lesson.readTime}
+                  </span>
+                </div>
+
+                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                  {lesson.title}
+                </h3>
+                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  {lesson.excerpt}
+                </p>
+
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                      {lesson.authorAvatar}
+                    </div>
+                    <span className="text-sm text-gray-700">{lesson.author}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-400 text-sm">
+                    <span className="flex items-center gap-1">
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                      </svg>
+                      {lesson.likes}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                        />
+                      </svg>
+                      {lesson.saves}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Learning From Life Matters (4 Benefit Cards - Static) */}
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-purple-600 font-semibold text-sm uppercase tracking-wider">
+              Why Choose Us
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">
+              Why Learning From Life Matters
+            </h2>
+            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+              Real experiences offer insights that no textbook can provide.
+              Here's why our community stands out.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {benefits.map((benefit, index) => (
+              <div
+                key={index}
+                className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-transparent hover:-translate-y-2"
+              >
+                <div
+                  className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 ${
+                    benefit.color === "blue"
+                      ? "bg-blue-100 group-hover:bg-blue-500"
+                      : benefit.color === "purple"
+                      ? "bg-purple-100 group-hover:bg-purple-500"
+                      : benefit.color === "emerald"
+                      ? "bg-emerald-100 group-hover:bg-emerald-500"
+                      : "bg-rose-100 group-hover:bg-rose-500"
+                  } transition-colors duration-300`}
+                >
+                  <span className="group-hover:scale-110 transition-transform">
+                    {benefit.icon}
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  {benefit.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {benefit.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Two Additional Sections */}
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Top Contributors of the Week (Dynamic) */}
+            <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-3xl p-8 text-white">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold">Top Contributors</h3>
+                  <p className="text-white/80 text-sm mt-1">This Week</p>
+                </div>
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                  <span className="text-2xl">🏆</span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {topContributors.map((contributor) => (
+                  <div
+                    key={contributor.id}
+                    className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 hover:bg-white/20 transition-colors"
+                  >
+                    <div className="flex items-center justify-center w-8 text-lg font-bold">
+                      {contributor.badge || `#${contributor.rank}`}
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-white/30 to-white/10 rounded-full flex items-center justify-center font-semibold">
+                      {contributor.avatar}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold">{contributor.name}</h4>
+                      <p className="text-white/70 text-sm">
+                        {contributor.lessonsCount} lessons •{" "}
+                        {contributor.totalLikes} likes
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <Link
-                to={`/lessons/${lesson.id}`}
-                className="text-blue-600 font-semibold hover:text-blue-700 transition duration-300"
+                to="/contributors"
+                className="mt-6 inline-flex items-center gap-2 text-white/90 hover:text-white text-sm font-medium"
               >
-                Read Full Story →
+                View all contributors
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
               </Link>
             </div>
-          ))}
-        </div>
-      </section>
 
-      <section className="py-12 md:py-20">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12">
-          Browse by Category
-        </h2>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {categories.map((category) => (
-            <Link
-              key={category.name}
-              to={`/lessons?category=${category.name}`}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 text-center group hover:-translate-y-1"
-            >
-              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-50 transition duration-300">
-                <span className="text-3xl">{category.icon}</span>
+            {/* Most Saved Lessons (Dynamic) */}
+            <div className="bg-white border border-gray-200 rounded-3xl p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    Most Saved Lessons
+                  </h3>
+                  <p className="text-gray-500 text-sm mt-1">
+                    Community favorites
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center">
+                  <span className="text-2xl">🔖</span>
+                </div>
               </div>
-              <h3 className="font-semibold text-gray-800">{category.name}</h3>
-            </Link>
-          ))}
+
+              <div className="space-y-4">
+                {mostSavedLessons.map((lesson, index) => (
+                  <Link
+                    key={lesson.id}
+                    to={`/lessons/${lesson.id}`}
+                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 font-semibold text-sm group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                        {lesson.title}
+                      </h4>
+                      <p className="text-gray-500 text-sm">
+                        by {lesson.author} • {lesson.category}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1 text-rose-500 font-medium">
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                      </svg>
+                      {lesson.saves}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <Link
+                to="/lessons?sort=saves"
+                className="mt-6 inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
+              >
+                View all saved lessons
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="py-12 md:py-20">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 md:p-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to Share Your Story?
+      {/* CTA Section */}
+      <section className="py-24 px-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Your Story Could Change
+            <span className="block mt-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Someone's Life
+            </span>
           </h2>
-          <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
-            Your experiences could help others navigate similar challenges. Join
-            our community of learners and sharers.
+          <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+            Join our community of learners and contributors. Share your wisdom,
+            gain insights, and grow together.
           </p>
-
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/register"
-              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition duration-300 text-lg"
+              className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              Start Sharing
+              Get Started Free
             </Link>
             <Link
-              to="/login"
-              className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition duration-300 text-lg"
+              to="/lessons"
+              className="px-10 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm border border-white/20"
             >
-              Already a Member? Login
+              Browse Lessons
             </Link>
           </div>
         </div>
