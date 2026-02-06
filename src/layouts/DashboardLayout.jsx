@@ -4,7 +4,6 @@ const DashboardLayout = () => {
   return (
     <div className="min-h-screen flex">
       
-      {/* Sidebar */}
       <aside className="w-64 bg-gray-900 text-white p-5">
         <h2 className="text-xl font-bold mb-6">Dashboard</h2>
 
@@ -24,7 +23,6 @@ const DashboardLayout = () => {
         </ul>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 p-6 bg-gray-100">
         <Outlet />
       </main>
