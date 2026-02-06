@@ -19,42 +19,13 @@ const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [role, setRole] = useState("user");
-  const [isPremium, setIsPremium] = useState(false);
+  const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const API = import.meta.env.VITE_API_URL;
 
-  const registerUser = async (email, password, name, photoURL) => {
-    setLoading(true);
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-
-    await updateProfile(result.user, {
-      displayName: name,
-      photoURL: photoURL,
-    });
-
-    return result;
-  };
-
-  const loginUser = (email, password) => {
-    setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
-  };
-
-  const googleLogin = () => {
-    setLoading(true);
-    return signInWithPopup(auth, googleProvider);
-  };
-
-  const logoutUser = async () => {
-    setLoading(true);
-    localStorage.removeItem("token");
-    await signOut(auth);
-  };
-
-  const syncUserWithDB = async (firebaseUser) => {
-    if (!firebaseUser) return;
+  const syncUserWithDB = async (firebaseUser, extraData = {}) => {
+    if (!firebaseUser) return null;
 
     try {
       const idToken = await firebaseUser.getIdToken();
@@ -62,9 +33,9 @@ const AuthProvider = ({ children }) => {
       const { data } = await axios.post(
         `${API}/users/sync`,
         {
-          name: firebaseUser.displayName,
+          name: extraData.name || firebaseUser.displayName,
           email: firebaseUser.email,
-          photoURL: firebaseUser.photoURL,
+          photoURL: extraData.photoURL || firebaseUser.photoURL,
         },
         {
           headers: {
@@ -78,10 +49,64 @@ const AuthProvider = ({ children }) => {
         localStorage.setItem("token", data.token);
       }
 
-      setRole(data?.role || "user");
-      setIsPremium(data?.isPremium || false);
+      setDbUser(data?.user || null);
+      return data?.user;
     } catch (err) {
       console.error("User sync failed:", err.response?.data || err.message);
+      return null;
+    }
+  };
+
+  const registerUser = async (email, password, name, photoURL) => {
+    setLoading(true);
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      await updateProfile(result.user, {
+        displayName: name,
+        photoURL: photoURL,
+      });
+      // Force sync with the new profile data
+      await syncUserWithDB(result.user, { name, photoURL });
+      return result;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginUser = async (email, password) => {
+    setLoading(true);
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      await syncUserWithDB(result.user);
+      return result;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const googleLogin = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      await syncUserWithDB(result.user);
+      return result;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logoutUser = async () => {
+    setLoading(true);
+    try {
+      localStorage.removeItem("token");
+      await signOut(auth);
+      setDbUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,14 +115,10 @@ const AuthProvider = ({ children }) => {
       setUser(currentUser);
 
       if (currentUser) {
-        try {
-          await syncUserWithDB(currentUser);
-        } catch (err) {
-          console.error("User sync failed:", err);
-        }
+        // Initial sync when opening the app or after refresh
+        await syncUserWithDB(currentUser);
       } else {
-        setRole("user");
-        setIsPremium(false);
+        setDbUser(null);
         localStorage.removeItem("token");
       }
 
@@ -109,10 +130,10 @@ const AuthProvider = ({ children }) => {
 
   const authInfo = {
     user,
-    role,
-    isPremium,
+    dbUser,
+    role: dbUser?.role || "user",
+    isPremium: dbUser?.isPremium || false,
     loading,
-
     registerUser,
     loginUser,
     googleLogin,

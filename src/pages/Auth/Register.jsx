@@ -1,14 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import {
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  updateProfile,
-} from "firebase/auth";
-import { auth, googleProvider } from "../../firebase/config";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import { showError, showSuccess } from "../../utils/toast";
 import { validatePassword } from "../../utils/validators";
-import api from "../../services/api";
 import {
   FaGoogle,
   FaUser,
@@ -22,27 +16,6 @@ import {
   FaCircleXmark,
 } from "react-icons/fa6";
 
-const syncUserToDb = async (user, profileData = {}) => {
-  try {
-    const idToken = await user.getIdToken();
-    await api.post(
-      "/users/sync",
-      {
-        name: profileData.name || user.displayName,
-        email: user.email,
-        photoURL: profileData.photoURL || user.photoURL,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-      },
-    );
-  } catch (error) {
-    console.error("Failed to sync user:", error);
-  }
-};
-
 export default function Register() {
   const [formData, setFormData] = useState({
     name: "",
@@ -54,7 +27,8 @@ export default function Register() {
   const [passwordErrors, setPasswordErrors] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false);
+  const { registerUser, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -78,37 +52,26 @@ export default function Register() {
       return;
     }
 
-    setLoading(true);
+    setLocalLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      await registerUser(
         formData.email,
         formData.password,
+        formData.name,
+        formData.photoURL,
       );
-
-      await updateProfile(userCredential.user, {
-        displayName: formData.name,
-        photoURL: formData.photoURL || "",
-      });
-
-      await syncUserToDb(userCredential.user, {
-        name: formData.name,
-        photoURL: formData.photoURL || "",
-      });
-
       showSuccess("Account created successfully!");
       navigate("/dashboard");
     } catch (error) {
       showError(error?.message || "Registration failed");
     } finally {
-      setLoading(false);
+      setLocalLoading(false);
     }
   };
 
   const handleGoogleRegister = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      await syncUserToDb(result.user);
+      await googleLogin();
       showSuccess("Logged in with Google!");
       navigate("/dashboard");
     } catch (error) {
@@ -220,73 +183,72 @@ export default function Register() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 pl-11 pr-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  required
-                />
-                <FaLock className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <FaRegEyeSlash className="w-5 h-5" />
-                  ) : (
-                    <FaRegEye className="w-5 h-5" />
-                  )}
-                </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 pl-11 pr-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    required
+                  />
+                  <FaLock className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <FaRegEyeSlash className="w-5 h-5" />
+                    ) : (
+                      <FaRegEye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
               </div>
-              <p className="mt-1 text-xs text-gray-500">
-                Min 6 characters, include uppercase & lowercase
-              </p>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 pl-11 pr-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  required
-                />
-                <FaShieldHalved className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? (
-                    <FaRegEyeSlash className="w-5 h-5" />
-                  ) : (
-                    <FaRegEye className="w-5 h-5" />
-                  )}
-                </button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 pl-11 pr-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    required
+                  />
+                  <FaShieldHalved className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? (
+                      <FaRegEyeSlash className="w-5 h-5" />
+                    ) : (
+                      <FaRegEye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={localLoading}
               className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
             >
-              {loading ? (
+              {localLoading ? (
                 <>
                   <FaSpinner className="animate-spin h-5 w-5" />
                   Creating account...
@@ -307,17 +269,6 @@ export default function Register() {
             </Link>
           </p>
         </div>
-
-        <p className="text-center text-xs text-gray-500 mt-6">
-          By creating an account, you agree to our{" "}
-          <Link to="/terms" className="text-purple-600 hover:underline">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link to="/privacy" className="text-purple-600 hover:underline">
-            Privacy Policy
-          </Link>
-        </p>
       </div>
     </div>
   );

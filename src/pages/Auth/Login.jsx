@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "../../firebase/config";
-import { showError, showSuccess } from "../../utils/toast";
-import api from "../../services/api";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { showSuccess, showError } from "../../utils/toast";
 import {
   FaGoogle,
   FaEnvelope,
@@ -13,32 +11,12 @@ import {
   FaSpinner,
 } from "react-icons/fa6";
 
-const syncUserToDb = async (user) => {
-  try {
-    const idToken = await user.getIdToken();
-    await api.post(
-      "/users/sync",
-      {
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-      },
-    );
-  } catch (error) {
-    console.error("Failed to sync user:", error);
-  }
-};
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false);
+  const { loginUser, googleLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -46,24 +24,22 @@ export default function Login() {
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLocalLoading(true);
 
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      await syncUserToDb(result.user);
+      await loginUser(email, password);
       showSuccess("Logged in successfully!");
       navigate(from, { replace: true });
     } catch (error) {
       showError(error?.message || "Login failed");
     } finally {
-      setLoading(false);
+      setLocalLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      await syncUserToDb(result.user);
+      await googleLogin();
       showSuccess("Logged in with Google!");
       navigate(from, { replace: true });
     } catch (error) {
@@ -152,10 +128,10 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={localLoading}
               className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {loading ? (
+              {localLoading ? (
                 <>
                   <FaSpinner className="animate-spin h-5 w-5" />
                   Signing in...
@@ -176,17 +152,6 @@ export default function Login() {
             </Link>
           </p>
         </div>
-
-        <p className="text-center text-xs text-gray-500 mt-6">
-          By signing in, you agree to our{" "}
-          <Link to="/terms" className="text-blue-600 hover:underline">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link to="/privacy" className="text-blue-600 hover:underline">
-            Privacy Policy
-          </Link>
-        </p>
       </div>
     </div>
   );
