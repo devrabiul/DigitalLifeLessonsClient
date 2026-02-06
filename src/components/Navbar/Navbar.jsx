@@ -6,6 +6,7 @@ import {
   FaUser,
   FaTableColumns,
   FaRightFromBracket,
+  FaStar,
 } from "react-icons/fa6";
 
 const Navbar = () => {
@@ -13,7 +14,7 @@ const Navbar = () => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const location = useLocation();
-  const { user, logoutUser } = useAuth();
+  const { user, logoutUser, isPremium } = useAuth();
 
   const publicLinks = [
     { path: "/", label: "Home" },
@@ -23,7 +24,7 @@ const Navbar = () => {
   const protectedLinks = [
     { path: "/dashboard/add-lesson", label: "Add Lesson" },
     { path: "/dashboard/my-lessons", label: "My Lessons" },
-    { path: "/pricing", label: "Pricing" },
+    ...(!isPremium ? [{ path: "/pricing", label: "Pricing" }] : []),
   ];
 
   const handleLogout = async () => {

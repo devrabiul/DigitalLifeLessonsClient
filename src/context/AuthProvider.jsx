@@ -117,6 +117,7 @@ const AuthProvider = ({ children }) => {
     loginUser,
     googleLogin,
     logoutUser,
+    refreshUserStatus: () => syncUserWithDB(user),
   };
 
   return (

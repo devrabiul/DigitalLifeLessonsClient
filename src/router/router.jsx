@@ -40,6 +40,7 @@ const router = createBrowserRouter([
       { path: "register", element: <Register /> },
       { path: "payment/success", element: <PaymentSuccess /> },
       { path: "payment/cancel", element: <PaymentCancel /> },
+      { path: "pricing", element: <Pricing /> },
     ],
   },
 
@@ -57,7 +58,6 @@ const router = createBrowserRouter([
       { path: "update-lesson/:id", element: <UpdateLesson /> },
       { path: "my-favorites", element: <Favorites /> },
       { path: "profile", element: <Profile /> },
-      { path: "pricing", element: <Pricing /> },
     ],
   },
 
