@@ -34,7 +34,7 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
-      { path: "public-lessons", element: <PublicLessons /> },
+      { path: "lessons", element: <PublicLessons /> },
       { path: "lesson/:id", element: <LessonDetails /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
