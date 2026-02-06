@@ -39,6 +39,8 @@ const Navbar = () => {
     return location.pathname.startsWith(path);
   };
 
+  const [hasImageError, setHasImageError] = useState(false);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -110,11 +112,12 @@ const Navbar = () => {
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                   className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
                 >
-                  {user.photoURL ? (
+                  {user.photoURL && !hasImageError ? (
                     <img
                       src={user.photoURL}
                       alt="Profile"
                       className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
+                      onError={() => setHasImageError(true)}
                     />
                   ) : (
                     <div className="w-9 h-9 bg-linear-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
