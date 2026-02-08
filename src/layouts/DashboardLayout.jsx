@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa6";
 
 const DashboardLayout = () => {
-  const { user, role, logoutUser } = useAuth();
+  const { user, dbUser, role, logoutUser } = useAuth();
   const location = useLocation();
 
   const userLinks = [
@@ -131,8 +131,20 @@ const DashboardLayout = () => {
         <div className="p-4 border-t border-gray-100">
           <div className="bg-gray-50 rounded-2xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
-                {user?.displayName?.charAt(0) || "U"}
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs overflow-hidden border border-blue-200">
+                {dbUser?.photoURL || user?.photoURL ? (
+                  <img
+                    src={dbUser?.photoURL || user?.photoURL}
+                    alt={user?.displayName}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.parentElement.innerHTML = `<span>${user?.displayName?.charAt(0) || "U"}</span>`;
+                    }}
+                  />
+                ) : (
+                  user?.displayName?.charAt(0) || "U"
+                )}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-gray-900 truncate">
