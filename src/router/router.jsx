@@ -8,6 +8,10 @@ import Register from "../pages/Auth/Register";
 import PublicLessons from "../pages/PublicLessons/PublicLessons";
 import LessonDetails from "../pages/LessonDetails/LessonDetails";
 import NotFound from "../pages/NotFound/NotFound";
+import AboutUs from "../pages/About/AboutUs";
+import Terms from "../pages/Legal/Terms";
+import Privacy from "../pages/Legal/Privacy";
+import Cookies from "../pages/Legal/Cookies";
 
 import AddLesson from "../pages/Dashboard/AddLesson";
 import MyLessons from "../pages/Dashboard/MyLessons";
@@ -42,6 +46,10 @@ const router = createBrowserRouter([
       { path: "payment/cancel", element: <PaymentCancel /> },
       { path: "pricing", element: <Pricing /> },
       { path: "profile/:email", element: <Profile /> },
+      { path: "about", element: <AboutUs /> },
+      { path: "terms", element: <Terms /> },
+      { path: "privacy", element: <Privacy /> },
+      { path: "cookies", element: <Cookies /> },
     ],
   },
 

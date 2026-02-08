@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import ScrollToTop from "../components/ScrollToTop";
 import {
   FaHouse,
   FaPlus,
@@ -48,6 +49,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
+      <ScrollToTop />
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
         <div className="p-6">
           <Link to="/" className="flex items-center gap-2">

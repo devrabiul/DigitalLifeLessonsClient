@@ -18,7 +18,6 @@ const Footer = () => {
     { label: "Home", path: "/" },
     { label: "Public Lessons", path: "/lessons" },
     { label: "About Us", path: "/about" },
-    { label: "Contact", path: "/contact" },
   ];
 
   const legalLinks = [
