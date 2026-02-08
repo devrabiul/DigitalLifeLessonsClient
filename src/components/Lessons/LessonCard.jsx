@@ -58,7 +58,6 @@ export default function LessonCard({ lesson }) {
   return (
     <div className={`group bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col relative overflow-hidden h-full ${isLocked ? 'ring-1 ring-violet-100' : 'hover:border-blue-100'}`}>
       
-      {/* Main Lesson Banner */}
       <div className="relative h-48 w-full overflow-hidden">
         <img 
           src={lesson?.photoURL || 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=800&q=80'} 
