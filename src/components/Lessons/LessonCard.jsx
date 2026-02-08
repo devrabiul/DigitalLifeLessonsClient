@@ -22,11 +22,7 @@ export default function LessonCard({ lesson }) {
     lesson?.createdBy?.name ||
     "Unknown";
 
-  const authorPhoto =
-    lesson?.authorPhoto ||
-    lesson?.author?.photo ||
-    lesson?.author?.photoURL ||
-    null;
+  const authorPhoto = lesson?.author?.photo || lesson?.author?.photoURL || null;
 
   const category = lesson?.category || "General";
   const emotionalTone = lesson?.emotionalTone;
@@ -54,105 +50,104 @@ export default function LessonCard({ lesson }) {
   };
 
   const excerptText = excerpt
-    ? excerpt.length > 140
-      ? `${excerpt.slice(0, 140)}...`
+    ? excerpt.length > 100
+      ? `${excerpt.slice(0, 100)}...`
       : excerpt
     : "";
 
   return (
-    <div className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 flex flex-col relative overflow-hidden h-full ${isLocked ? 'ring-1 ring-violet-100 hover:ring-violet-200' : 'hover:border-blue-100'}`}>
-      <div className="absolute top-0 right-0 z-10">
-        {isPremiumLesson ? (
-          <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-bl-xl flex items-center gap-1.5 uppercase tracking-wider shadow-sm">
-            <FaCrown className="w-3 h-3" />
-            Premium
-          </div>
-        ) : (
-          <div className="bg-blue-50 text-blue-600 text-[10px] font-bold px-3 py-1.5 rounded-bl-xl flex items-center gap-1 uppercase tracking-wider">
-            Free Access
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-wrap gap-2 mb-4">
-        <span className="inline-flex items-center bg-gray-50 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide border border-gray-100">
-          {category}
-        </span>
-        {emotionalTone ? (
-          <span className="inline-flex items-center bg-gray-50 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide border border-gray-100">
-            {emotionalTone}
-          </span>
-        ) : null}
-      </div>
-
-      <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 min-h-[3.5rem] group-hover:text-blue-600 transition-colors">{title}</h3>
-
-      <div className={`relative mb-8 flex-grow ${isLocked ? 'select-none' : ''}`}>
-        {excerptText ? (
-          <p className={`text-gray-600 text-sm leading-relaxed ${isLocked ? 'blur-[5px] opacity-40' : ''}`}>{excerptText}</p>
-        ) : (
-          <p className="text-gray-400 text-sm italic">No description available</p>
-        )}
+    <div className={`group bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col relative overflow-hidden h-full ${isLocked ? 'ring-1 ring-violet-100' : 'hover:border-blue-100'}`}>
+      
+      {/* Main Lesson Banner */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img 
+          src={lesson?.photoURL || 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=800&q=80'} 
+          alt={title}
+          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${isLocked ? 'blur-sm grayscale' : ''}`}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         
-        {isLocked && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-center bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-violet-50 max-w-[80%]">
-              <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <FaLock className="w-4 h-4 text-violet-600" />
-              </div>
-              <p className="text-sm text-violet-900 font-bold">Premium Lesson</p>
-              <p className="text-[11px] text-violet-700/70 font-medium">Upgrade to view full lesson</p>
+        <div className="absolute top-4 right-4 z-10">
+          {isPremiumLesson ? (
+            <div className="bg-amber-400 text-amber-950 text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-1.5 uppercase tracking-wider shadow-lg">
+              <FaCrown className="w-3 h-3" />
+              Premium
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="bg-white/20 backdrop-blur-md text-white text-[10px] font-black px-3 py-1.5 rounded-full border border-white/30 uppercase tracking-wider">
+              Free
+            </div>
+          )}
+        </div>
+
+        <div className="absolute bottom-4 left-4">
+          <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">
+            {category}
+          </span>
+        </div>
       </div>
 
-      <div className="mt-auto space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="p-6 flex flex-col flex-grow">
+        <h3 className="text-xl font-black text-gray-900 mb-3 line-clamp-2 min-h-[3.5rem] group-hover:text-blue-600 transition-colors">
+          {title}
+        </h3>
+
+        <div className={`relative mb-6 flex-grow ${isLocked ? 'select-none' : ''}`}>
+          <p className="text-gray-500 text-sm leading-relaxed font-medium">
+            {excerptText || "Embark on this journey of wisdom and growth..."}
+          </p>
+          
+          {isLocked && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/10 backdrop-blur-[2px] rounded-xl">
+              <FaLock className="text-violet-600 mb-1" />
+              <p className="text-[10px] text-violet-700 font-bold uppercase tracking-widest">Locked</p>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center border border-gray-200">
+            <div className="w-10 h-10 rounded-2xl bg-gray-100 overflow-hidden flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-gray-100">
               {authorPhoto ? (
-                <img src={authorPhoto} alt={authorName} className="w-full h-full object-cover" onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = `<span class="text-xs font-bold text-gray-400">${getInitials(authorName)}</span>`;
-                }} />
+                <img src={authorPhoto} alt={authorName} className="w-full h-full object-cover" />
               ) : (
-                <span className="text-xs font-bold text-gray-400">{getInitials(authorName)}</span>
+                <span className="text-xs font-black text-gray-400">{getInitials(authorName)}</span>
               )}
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900 line-clamp-1">{authorName}</p>
-              <div className="flex items-center gap-1.5 text-gray-500 text-[10px]">
-                <FaCalendarAlt className="w-2.5 h-2.5" />
+              <p className="text-xs font-black text-gray-900 line-clamp-1">{authorName}</p>
+              <div className="flex items-center gap-1.5 text-gray-400 text-[9px] font-bold uppercase tracking-tighter">
+                <FaCalendarAlt className="w-2 h-2" />
                 <span>{createdAt}</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 text-xs font-bold text-gray-700">
-              <span className="text-red-500 text-sm">❤️</span> {likesCount}
-            </span>
+          <div className="flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-100">
+            <span className="text-rose-500 text-xs">❤️</span>
+            <span className="text-xs font-black text-rose-700">{likesCount}</span>
           </div>
         </div>
 
-        {lessonId && (
-          isLocked ? (
-            <Link
-              to="/pricing"
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-bold rounded-xl hover:from-violet-700 hover:to-purple-700 transition-all shadow-lg shadow-violet-200"
-            >
-              <FaCrown className="w-4 h-4" />
-              Upgrade to View
-            </Link>
-          ) : (
-            <Link
-              to={`/lessons/${lessonId}`}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 group-hover:bg-blue-700"
-            >
-              See Details →
-            </Link>
-          )
-        )}
+        <div className="mt-6">
+          {lessonId && (
+            isLocked ? (
+              <Link
+                to="/pricing"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-violet-600 text-white text-xs font-black rounded-2xl hover:bg-violet-700 transition-all shadow-lg shadow-violet-100 uppercase tracking-widest"
+              >
+                <FaCrown className="w-3 h-3" />
+                Unlock Now
+              </Link>
+            ) : (
+              <Link
+                to={`/lessons/${lessonId}`}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white text-xs font-black rounded-2xl hover:bg-gray-800 transition-all shadow-lg shadow-gray-200 uppercase tracking-widest"
+              >
+                Read Lesson →
+              </Link>
+            )
+          )}
+        </div>
       </div>
     </div>
   );
