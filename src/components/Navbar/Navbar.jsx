@@ -107,6 +107,12 @@ const Navbar = () => {
                 </Link>
               ))}
 
+            {user && isPremium && (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 text-[11px] font-black uppercase tracking-wider rounded-lg border border-amber-200 ml-2 shadow-sm">
+                <FaStar className="text-[10px]" /> Premium ⭐
+              </span>
+            )}
+
             {user ? (
               <div className="relative ml-3" ref={dropdownRef}>
                 <button

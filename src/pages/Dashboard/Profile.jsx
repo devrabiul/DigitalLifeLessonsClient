@@ -100,9 +100,17 @@ const Profile = () => {
                 <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-700"></div>
                 <div className="px-8 pb-8">
                 <div className="relative flex flex-col md:flex-row md:items-end gap-6 -mt-12 mb-8">
-                    <div className="w-32 h-32 rounded-3xl border-4 border-white overflow-hidden bg-gray-50 shadow-lg shrink-0">
+                    <div className="w-32 h-32 rounded-3xl border-4 border-white overflow-hidden bg-gray-50 shadow-lg shrink-0 flex items-center justify-center">
                     {profileUser?.photoURL ? (
-                        <img src={profileUser.photoURL} alt={profileUser.name} className="w-full h-full object-cover" />
+                        <img 
+                            src={profileUser.photoURL} 
+                            alt={profileUser.name} 
+                            className="w-full h-full object-cover" 
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center text-gray-300 text-4xl"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path></svg></div>`;
+                            }}
+                        />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-300 text-4xl">
                         <FaUser />
