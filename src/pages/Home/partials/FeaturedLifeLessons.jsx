@@ -110,9 +110,9 @@ const FeaturedLifeLessons = () => {
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
-                      {lesson.author?.photoURL || lesson.photoURL ? (
+                      {lesson.author?.photo || lesson.photoURL ? (
                         <img
-                          src={lesson.author?.photoURL || lesson.photoURL}
+                          src={lesson.author?.photo || lesson.photoURL}
                           alt=""
                           className="w-full h-full object-cover"
                           onError={(e) => {
