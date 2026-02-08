@@ -69,7 +69,7 @@ const AddLesson = () => {
             <h1 className="text-3xl font-bold">Share a Life Lesson</h1>
           </div>
           <p className="text-blue-100 max-w-xl">
-            Your wisdom can change someone's life. Share your story, insights,
+            Your lesson can change someone's life. Share your story, insights,
             and the lessons you've learned along the way.
           </p>
         </div>
@@ -255,7 +255,7 @@ const AddLesson = () => {
                 </>
               ) : (
                 <>
-                  Share My Wisdom
+                  Share My Lesson
                   <FaPlus className="w-4 h-4" />
                 </>
               )}

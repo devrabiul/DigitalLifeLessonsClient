@@ -24,8 +24,8 @@ export default function LessonCard({ lesson }) {
 
   const authorPhoto =
     lesson?.authorPhoto ||
+    lesson?.author?.photo ||
     lesson?.author?.photoURL ||
-    lesson?.photoURL ||
     null;
 
   const category = lesson?.category || "General";
@@ -101,7 +101,7 @@ export default function LessonCard({ lesson }) {
                 <FaLock className="w-4 h-4 text-violet-600" />
               </div>
               <p className="text-sm text-violet-900 font-bold">Premium Lesson</p>
-              <p className="text-[11px] text-violet-700/70 font-medium">Upgrade to view full wisdom</p>
+              <p className="text-[11px] text-violet-700/70 font-medium">Upgrade to view full lesson</p>
             </div>
           </div>
         )}

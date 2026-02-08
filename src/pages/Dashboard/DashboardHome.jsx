@@ -101,7 +101,7 @@ const DashboardHome = () => {
           <div>
             <h3 className="text-lg font-bold mb-1">Create a New Lesson</h3>
             <p className="text-white/80 text-sm">
-              Share your wisdom and inspire the community.
+              Share your lesson and inspire the community.
             </p>
           </div>
           <div className="flex items-center gap-2 mt-4 font-semibold">

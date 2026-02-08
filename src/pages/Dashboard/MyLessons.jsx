@@ -149,7 +149,7 @@ const MyLessons = () => {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 rounded-3xl text-white shadow-xl shadow-blue-100 mb-10 overflow-hidden relative">
         <div className="relative z-10">
           <h1 className="text-3xl font-bold mb-2">My Life Lessons</h1>
-          <p className="text-blue-100">Manage, edit, and track the impact of your shared wisdom.</p>
+          <p className="text-blue-100">Manage, edit, and track the impact of your shared lesson.</p>
         </div>
         <div className="absolute top-0 right-0 p-8 opacity-10 flex gap-4">
           <FaBook className="w-24 h-24 rotate-12" />
@@ -332,7 +332,7 @@ const MyLessons = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Story / Wisdom</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Story / Lesson</label>
                 <textarea
                   required
                   rows={6}

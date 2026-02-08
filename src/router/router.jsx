@@ -41,6 +41,7 @@ const router = createBrowserRouter([
       { path: "payment/success", element: <PaymentSuccess /> },
       { path: "payment/cancel", element: <PaymentCancel /> },
       { path: "pricing", element: <Pricing /> },
+      { path: "profile/:email", element: <Profile /> },
     ],
   },
 

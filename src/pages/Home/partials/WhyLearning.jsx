@@ -4,7 +4,7 @@ const WhyLearning = () => {
   const benefits = [
     {
       icon: "🎯",
-      title: "Real-World Wisdom",
+      title: "Real-World Lesson",
       description:
         "Learn from authentic experiences, not just theory. Get practical insights that you can apply immediately in your life.",
       color: "blue",

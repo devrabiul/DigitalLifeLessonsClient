@@ -84,7 +84,7 @@ const Favorites = () => {
       <div className="bg-gradient-to-r from-rose-500 to-pink-600 p-8 rounded-3xl text-white shadow-xl shadow-rose-100 mb-10 overflow-hidden relative">
         <div className="relative z-10">
           <h1 className="text-3xl font-bold mb-2">My Favorites</h1>
-          <p className="text-rose-100">Wisdom you've saved to revisit and reflect upon.</p>
+          <p className="text-rose-100">Lesson you've saved to revisit and reflect upon.</p>
         </div>
         <div className="absolute top-0 right-0 p-8 opacity-10 flex gap-4">
           <FaHeart className="w-24 h-24 rotate-12" />
@@ -160,8 +160,13 @@ const Favorites = () => {
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-[10px]">
-                          <FaUser />
+                        <div className="w-8 h-8 rounded-full bg-gray-50 overflow-hidden flex items-center justify-center border border-gray-100">
+                          <ImageWithFallback
+                            src={fav.authorPhoto}
+                            alt={fav.authorName}
+                            className="w-full h-full object-cover"
+                            icon={FaUser}
+                          />
                         </div>
                         <span className="text-sm font-medium text-gray-700">{fav.authorName}</span>
                       </div>

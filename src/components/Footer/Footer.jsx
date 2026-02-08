@@ -67,7 +67,7 @@ const Footer = () => {
               <span className="text-xl font-bold text-white">Life Lessons</span>
             </Link>
             <p className="text-sm text-gray-400 mb-4 leading-relaxed">
-              Learn from real stories, share wisdom, and grow together. Your
+              Learn from real stories, share lesson, and grow together. Your
               journey to a better life starts here.
             </p>
           </div>

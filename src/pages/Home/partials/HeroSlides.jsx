@@ -9,7 +9,7 @@ const HeroSlides = () => {
     {
       id: 1,
       title: "Learn from Real Life Experiences",
-      subtitle: "Discover wisdom from people who've walked the path before you",
+      subtitle: "Discover lesson from people who've walked the path before you",
       description:
         "Join thousands of learners gaining insights from authentic life stories and experiences shared by our community.",
       cta: "Start Learning",
@@ -33,7 +33,7 @@ const HeroSlides = () => {
       title: "Grow Together as a Community",
       subtitle: "Connect with like-minded individuals",
       description:
-        "Be part of a supportive community where wisdom is shared, questions are answered, and everyone grows together.",
+        "Be part of a supportive community where lesson is shared, questions are answered, and everyone grows together.",
       cta: "Join Community",
       ctaLink: "/register",
       bgGradient: "from-emerald-600 via-teal-600 to-cyan-600",
