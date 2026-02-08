@@ -1,9 +1,7 @@
 import { Link } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
-
-function getLessonId(lesson) {
-  return lesson?._id || lesson?.id;
-}
+import { FaLock, FaCrown, FaCalendarAlt } from "react-icons/fa";
+import { getLessonId } from "../../utils/lessonUtils";
 
 export default function LessonCard({ lesson }) {
   const { dbUser } = useAuth();
@@ -24,17 +22,37 @@ export default function LessonCard({ lesson }) {
     lesson?.createdBy?.name ||
     "Unknown";
 
+  const authorPhoto =
+    lesson?.authorPhoto ||
+    lesson?.author?.photoURL ||
+    lesson?.photoURL ||
+    null;
+
   const category = lesson?.category || "General";
   const emotionalTone = lesson?.emotionalTone;
   const accessLevel = lesson?.access_level || "free";
+  const createdAt = lesson?.createdAt ? new Date(lesson.createdAt).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  }) : "Recent";
 
   const likesCount = lesson?.likesCount ?? lesson?.likes?.length ?? 0;
-  const favoritesCount = lesson?.favoritesCount ?? 0;
 
   // Check if content should be locked for this user
   const isPremiumLesson = accessLevel === "premium";
   const userIsPremium = dbUser?.isPremium || dbUser?.role === 'admin';
   const isLocked = isPremiumLesson && !userIsPremium;
+
+  const getInitials = (name) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   const excerptText = excerpt
     ? excerpt.length > 140
@@ -43,83 +61,103 @@ export default function LessonCard({ lesson }) {
     : "";
 
   return (
-    <div className={`bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6 border border-gray-100 flex flex-col relative overflow-hidden ${isLocked ? 'ring-2 ring-violet-200' : ''}`}>
-      {/* Premium Badge */}
-      {isPremiumLesson && (
-        <div className="absolute top-0 right-0">
-          <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-            <span className="flex items-center gap-1">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              Premium
-            </span>
+    <div className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 flex flex-col relative overflow-hidden h-full ${isLocked ? 'ring-1 ring-violet-100 hover:ring-violet-200' : 'hover:border-blue-100'}`}>
+      {/* Access Badge */}
+      <div className="absolute top-0 right-0 z-10">
+        {isPremiumLesson ? (
+          <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-bl-xl flex items-center gap-1.5 uppercase tracking-wider shadow-sm">
+            <FaCrown className="w-3 h-3" />
+            Premium
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="bg-blue-50 text-blue-600 text-[10px] font-bold px-3 py-1.5 rounded-bl-xl flex items-center gap-1 uppercase tracking-wider">
+            Free Access
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        <span className="inline-flex items-center bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
+        <span className="inline-flex items-center bg-gray-50 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide border border-gray-100">
           {category}
         </span>
         {emotionalTone ? (
-          <span className="inline-flex items-center bg-purple-100 text-purple-800 text-xs font-semibold px-3 py-1 rounded-full">
+          <span className="inline-flex items-center bg-gray-50 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide border border-gray-100">
             {emotionalTone}
           </span>
         ) : null}
       </div>
 
-      <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 min-h-[3.5rem] group-hover:text-blue-600 transition-colors">{title}</h3>
 
       {/* Content - blurred if locked */}
-      <div className={`relative ${isLocked ? 'select-none' : ''}`}>
+      <div className={`relative mb-8 flex-grow ${isLocked ? 'select-none' : ''}`}>
         {excerptText ? (
-          <p className={`text-gray-600 mb-4 flex-1 ${isLocked ? 'blur-sm' : ''}`}>{excerptText}</p>
+          <p className={`text-gray-600 text-sm leading-relaxed ${isLocked ? 'blur-[5px] opacity-40' : ''}`}>{excerptText}</p>
         ) : (
-          <div className="flex-1" />
+          <p className="text-gray-400 text-sm italic">No description available</p>
         )}
         
         {/* Lock Overlay */}
         {isLocked && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg">
-              <svg className="w-6 h-6 text-violet-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              <p className="text-xs text-violet-700 font-medium">Premium Content</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className="text-center bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-violet-50 max-w-[80%]">
+              <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <FaLock className="w-4 h-4 text-violet-600" />
+              </div>
+              <p className="text-sm text-violet-900 font-bold">Premium Lesson</p>
+              <p className="text-[11px] text-violet-700/70 font-medium">Upgrade to view full wisdom</p>
             </div>
           </div>
         )}
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-        <div className="text-sm text-gray-700 font-medium">{authorName}</div>
-        <div className="flex items-center gap-3 text-sm">
-          <span className="text-red-500 font-semibold">❤️ {likesCount}</span>
-          <span className="text-gray-700 font-semibold">🔖 {favoritesCount}</span>
+      <div className="mt-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center border border-gray-200">
+              {authorPhoto ? (
+                <img src={authorPhoto} alt={authorName} className="w-full h-full object-cover" onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.parentElement.innerHTML = `<span class="text-xs font-bold text-gray-400">${getInitials(authorName)}</span>`;
+                }} />
+              ) : (
+                <span className="text-xs font-bold text-gray-400">{getInitials(authorName)}</span>
+              )}
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900 line-clamp-1">{authorName}</p>
+              <div className="flex items-center gap-1.5 text-gray-500 text-[10px]">
+                <FaCalendarAlt className="w-2.5 h-2.5" />
+                <span>{createdAt}</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-1 text-xs font-bold text-gray-700">
+              <span className="text-red-500 text-sm">❤️</span> {likesCount}
+            </span>
+          </div>
         </div>
-      </div>
 
-      {lessonId ? (
-        isLocked ? (
-          <Link
-            to="/pricing"
-            className="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold rounded-lg hover:from-violet-700 hover:to-purple-700 transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            Unlock with Premium
-          </Link>
-        ) : (
-          <Link
-            to={`/lessons/${lessonId}`}
-            className="mt-4 inline-block text-blue-600 font-semibold hover:text-blue-700"
-          >
-            Read Full Story →
-          </Link>
-        )
-      ) : null}
+        {lessonId && (
+          isLocked ? (
+            <Link
+              to="/pricing"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-bold rounded-xl hover:from-violet-700 hover:to-purple-700 transition-all shadow-lg shadow-violet-200"
+            >
+              <FaCrown className="w-4 h-4" />
+              Upgrade to View
+            </Link>
+          ) : (
+            <Link
+              to={`/lessons/${lessonId}`}
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 group-hover:bg-blue-700"
+            >
+              See Details →
+            </Link>
+          )
+        )}
+      </div>
     </div>
   );
 }
