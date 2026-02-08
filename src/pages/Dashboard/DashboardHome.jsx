@@ -172,7 +172,7 @@ const DashboardHome = () => {
               stats.recentLessons.map((lesson) => (
                 <Link
                   key={lesson._id}
-                  to={`/lesson/${lesson._id}`}
+                  to={`/lessons/${lesson._id}`}
                   className="flex items-start gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
                 >
                   <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
