@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import {
   getAuth,
@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
 
   const API = import.meta.env.VITE_API_URL;
 
-  const syncUserWithDB = async (firebaseUser, extraData = {}) => {
+  const syncUserWithDB = useCallback(async (firebaseUser, extraData = {}) => {
     if (!firebaseUser) return null;
 
     try {
@@ -55,7 +55,7 @@ const AuthProvider = ({ children }) => {
       console.error("User sync failed:", err.response?.data || err.message);
       return null;
     }
-  };
+  }, [API]);
 
   const registerUser = async (email, password, name, photoURL) => {
     setLoading(true);
@@ -136,7 +136,7 @@ const AuthProvider = ({ children }) => {
     loginUser,
     googleLogin,
     logoutUser,
-    refreshUserStatus: () => syncUserWithDB(user),
+    refreshUserStatus: useCallback(() => syncUserWithDB(user), [syncUserWithDB, user]),
   };
 
   return (

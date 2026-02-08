@@ -16,33 +16,38 @@ const PaymentSuccess = () => {
   const { user, refreshUserStatus } = useAuth();
   const sessionId = searchParams.get("session_id");
 
+  const toastShown = React.useRef(false);
+
   useEffect(() => {
     let interval;
     const verifyPayment = async () => {
-      if (!user?.email) return;
+      if (!user?.email || !verifying || toastShown.current) return;
 
       try {
         const { data } = await api.get(
           `/payments/verify-payment?userId=${user.email}&session_id=${sessionId}`,
         );
-        if (data.success) {
+        if (data.success && !toastShown.current) {
+          toastShown.current = true;
           toast.success("Welcome to Premium!");
-          await refreshUserStatus();
           setVerifying(false);
-          clearInterval(interval);
+          await refreshUserStatus();
+          if (interval) clearInterval(interval);
         }
       } catch (error) {
         console.error("Verification failed:", error);
       }
     };
 
-    if (user) {
-      interval = setInterval(verifyPayment, 2000);
+    if (user && verifying) {
+      interval = setInterval(verifyPayment, 3000);
       verifyPayment();
     }
 
-    return () => clearInterval(interval);
-  }, [user, refreshUserStatus]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [user, sessionId, verifying, refreshUserStatus]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
