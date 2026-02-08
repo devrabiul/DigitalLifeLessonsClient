@@ -67,7 +67,6 @@ const DashboardHome = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Welcome Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
           Welcome back, {user?.displayName || "User"}! 👋
@@ -77,7 +76,6 @@ const DashboardHome = () => {
         </p>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => (
           <div
@@ -96,7 +94,6 @@ const DashboardHome = () => {
           </div>
         ))}
 
-        {/* Quick Action Card */}
         <Link
           to="/dashboard/add-lesson"
           className="lg:col-span-2 bg-gradient-to-br from-blue-600 to-purple-600 p-6 rounded-2xl shadow-lg border border-transparent hover:scale-[1.02] transition-transform text-white flex flex-col justify-between"
@@ -114,7 +111,6 @@ const DashboardHome = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Weekly Contributions Chart */}
         <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h3 className="text-lg font-bold text-gray-900 mb-6">
             Weekly Contributions
@@ -161,7 +157,6 @@ const DashboardHome = () => {
           </div>
         </div>
 
-        {/* Recently Added */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-bold text-gray-900">Recently Added</h3>

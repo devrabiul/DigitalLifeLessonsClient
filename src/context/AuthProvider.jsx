@@ -69,7 +69,6 @@ const AuthProvider = ({ children }) => {
         displayName: name,
         photoURL: photoURL,
       });
-      // Force sync with the new profile data
       await syncUserWithDB(result.user, { name, photoURL });
       return result;
     } finally {
@@ -115,7 +114,6 @@ const AuthProvider = ({ children }) => {
       setUser(currentUser);
 
       if (currentUser) {
-        // Initial sync when opening the app or after refresh
         await syncUserWithDB(currentUser);
       } else {
         setDbUser(null);

@@ -39,7 +39,6 @@ export default function LessonCard({ lesson }) {
 
   const likesCount = lesson?.likesCount ?? lesson?.likes?.length ?? 0;
 
-  // Check if content should be locked for this user
   const isPremiumLesson = accessLevel === "premium";
   const userIsPremium = dbUser?.isPremium || dbUser?.role === 'admin';
   const isLocked = isPremiumLesson && !userIsPremium;
@@ -62,7 +61,6 @@ export default function LessonCard({ lesson }) {
 
   return (
     <div className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 flex flex-col relative overflow-hidden h-full ${isLocked ? 'ring-1 ring-violet-100 hover:ring-violet-200' : 'hover:border-blue-100'}`}>
-      {/* Access Badge */}
       <div className="absolute top-0 right-0 z-10">
         {isPremiumLesson ? (
           <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-bl-xl flex items-center gap-1.5 uppercase tracking-wider shadow-sm">
@@ -89,7 +87,6 @@ export default function LessonCard({ lesson }) {
 
       <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 min-h-[3.5rem] group-hover:text-blue-600 transition-colors">{title}</h3>
 
-      {/* Content - blurred if locked */}
       <div className={`relative mb-8 flex-grow ${isLocked ? 'select-none' : ''}`}>
         {excerptText ? (
           <p className={`text-gray-600 text-sm leading-relaxed ${isLocked ? 'blur-[5px] opacity-40' : ''}`}>{excerptText}</p>
@@ -97,7 +94,6 @@ export default function LessonCard({ lesson }) {
           <p className="text-gray-400 text-sm italic">No description available</p>
         )}
         
-        {/* Lock Overlay */}
         {isLocked && (
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="text-center bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-violet-50 max-w-[80%]">

@@ -76,7 +76,6 @@ const AdminHome = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Admin Overview 📊</h1>
         <p className="text-gray-600">
@@ -84,7 +83,6 @@ const AdminHome = () => {
         </p>
       </div>
 
-      {/* Overview Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {overviewCards.map((card, index) => (
           <div
@@ -105,7 +103,6 @@ const AdminHome = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Platform Growth Chart */}
         <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-lg font-bold text-gray-900">Lesson Growth</h3>
@@ -148,7 +145,6 @@ const AdminHome = () => {
           </div>
         </div>
 
-        {/* Most Active Contributors */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h3 className="text-lg font-bold text-gray-900 mb-6">
             Top Contributors

@@ -48,7 +48,6 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
         <div className="p-6">
           <Link to="/" className="flex items-center gap-2">
@@ -62,7 +61,6 @@ const DashboardLayout = () => {
         </div>
 
         <nav className="flex-1 px-4 space-y-8 overflow-y-auto pt-4">
-          {/* User Section */}
           <div>
             <p className="px-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">
               Member Area
@@ -94,7 +92,6 @@ const DashboardLayout = () => {
             </div>
           </div>
 
-          {/* Admin Section */}
           {role === "admin" && (
             <div>
               <p className="px-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">
@@ -131,7 +128,6 @@ const DashboardLayout = () => {
           )}
         </nav>
 
-        {/* User Footer */}
         <div className="p-4 border-t border-gray-100">
           <div className="bg-gray-50 rounded-2xl p-4">
             <div className="flex items-center gap-3 mb-3">
@@ -157,7 +153,6 @@ const DashboardLayout = () => {
         </div>
       </aside>
 
-      {/* Content Area */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         <header className="h-16 bg-white border-b border-gray-200 px-8 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
