@@ -261,7 +261,7 @@ const LessonDetails = () => {
                     {lesson.story}
                   </p>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-white/40 backdrop-blur-[2px] rounded-3xl">
-                    <div className="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center text-white text-3xl mb-6 shadow-xl shadow-indigo-200 animate-bounce">
+                    <div className="w-20 py-2 px-6 bg-indigo-600 rounded-full flex items-center justify-center text-white text-3xl mb-6 shadow-xl shadow-indigo-200">
                       <FaLock />
                     </div>
                     <h3 className="text-2xl font-black text-gray-900 mb-2">Premium Lesson</h3>

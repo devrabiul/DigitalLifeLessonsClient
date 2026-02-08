@@ -223,10 +223,10 @@ const MyLessons = () => {
                     <td className="px-6 py-5">
                       <div className="flex flex-col items-center gap-1">
                         <span className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                          ❤️ {lesson.likesCount || 0}
+                          ❤️ {lesson?.likesCount ?? 0}
                         </span>
                         <span className="text-[10px] font-medium text-gray-400">
-                          Saves: {lesson.favoritesCount || 0}
+                          Saves: {lesson?.favoritesCount ?? 0}
                         </span>
                       </div>
                     </td>
